@@ -18,7 +18,7 @@ public class Calculator {
 			input = in.nextLine().toUpperCase();
 		}
 		
-		System.out.println("What is the value of the property? Enter as a number in GDP");
+		System.out.println("What is the value of the property? Enter as a number only in GBP");
 		double propertyValue = 0.0;
 		try {
 			propertyValue = in.nextDouble();
@@ -32,6 +32,7 @@ public class Calculator {
 				System.out.println("LBTT to pay: £" + calculateLBTT(propertyValue));
 				break;
 			case "E":
+				System.out.println("Stamp Duty to pay: £" + calculateStampDuty(propertyValue));
 				break;
 		}
     }
@@ -43,6 +44,18 @@ public class Calculator {
 	 */
 	public static BigDecimal calculateLBTT(double propertyValue) {
 		final double taxBands[] = {750000,325000,250000};
+		final double taxRates[] = {0.12, 0.1, 0.05};
+		
+		return calculateTax(propertyValue, taxBands, taxRates);
+	}
+	
+	/**
+	 * Calculates the Stamp Duty (England/NI) ~ rates effective 08/07/20 - 31/03/21
+	 * https://www.gov.uk/stamp-duty-land-tax/residential-property-rates
+	 * @return Stamp Duty to pay
+	 */
+	public static BigDecimal calculateStampDuty(double propertyValue) {
+		final double taxBands[] = {1500000,925000,500000};
 		final double taxRates[] = {0.12, 0.1, 0.05};
 		
 		return calculateTax(propertyValue, taxBands, taxRates);
