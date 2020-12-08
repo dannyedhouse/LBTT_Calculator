@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 public class Calculator {
 
@@ -43,10 +44,12 @@ public class Calculator {
 	 * @return LBTT Tax due
 	 */
 	public static BigDecimal calculateLBTT(double propertyValue) {
-		final double taxBands[] = {750000,325000,250000};
-		final double taxRates[] = {0.12, 0.1, 0.05};
+		TreeMap<Integer, Double> taxBands = new TreeMap<>();
+		taxBands.put(750000, 0.12);
+		taxBands.put(325000, 0.1);
+		taxBands.put(250000, 0.05);
 		
-		return calculateTax(propertyValue, taxBands, taxRates);
+		return calculateTax(propertyValue, taxBands);
 	}
 	
 	/**
@@ -55,17 +58,19 @@ public class Calculator {
 	 * @return Stamp Duty to pay
 	 */
 	public static BigDecimal calculateStampDuty(double propertyValue) {
-		final double taxBands[] = {1500000,925000,500000};
-		final double taxRates[] = {0.12, 0.1, 0.05};
+		TreeMap<Integer, Double> taxBands = new TreeMap<>();
+		taxBands.put(1500000, 0.12);
+		taxBands.put(925000, 0.1);
+		taxBands.put(500000, 0.05);
 		
-		return calculateTax(propertyValue, taxBands, taxRates);
+		return calculateTax(propertyValue, taxBands);
 	}
 	
 	/**
 	 * Handles calculation of both LBTT/Stamp Duty.
 	 * @return Tax to pay
 	 */
-	public static BigDecimal calculateTax(double propertyValue, double[] taxBands, double[] taxRates) {
+	public static BigDecimal calculateTax(double propertyValue, TreeMap<Integer, Double> taxBands) {
 		BigDecimal tax = new BigDecimal(0.0);
 		
 		if (propertyValue<=0.0) {
@@ -74,10 +79,10 @@ public class Calculator {
 		
 		BigDecimal taxableSum = BigDecimal.valueOf(propertyValue); //Use BigDecimal for currency
 
-		for (int i = 0; i<taxBands.length; i++) {
-			if (propertyValue >= taxBands[i]) {
-				BigDecimal amountTaxable = taxableSum.subtract(BigDecimal.valueOf(taxBands[i]));
-				tax = tax.add(amountTaxable.multiply(new BigDecimal(taxRates[i]).setScale(2, RoundingMode.HALF_EVEN)));
+		for (int taxBand: taxBands.descendingKeySet()) {
+			if (propertyValue >= taxBand) {
+				BigDecimal amountTaxable = taxableSum.subtract(BigDecimal.valueOf(taxBand));
+				tax = tax.add(amountTaxable.multiply(new BigDecimal(taxBands.get(taxBand)).setScale(2, RoundingMode.HALF_EVEN)));
 				taxableSum = taxableSum.subtract(amountTaxable);
 			}		
 		}
